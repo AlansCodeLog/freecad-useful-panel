@@ -12,7 +12,6 @@ def usefulPanelsMain(name):
 
 	import math
 	import re
-	import sys
 
 	from PySide import QtCore, QtGui
 
@@ -119,6 +118,26 @@ def usefulPanelsMain(name):
 			# spacer = verticalSpacer = QtGui.QSpacerItem(
 			# 	0, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 			# self.layout.addItem(spacer)
+
+			self.other_layout = QtGui.QFormLayout()
+			self.other_layout.setContentsMargins(0, 0, 0, 0)
+			self.layout.addLayout(self.other_layout)
+
+			self.exportTypeLabel = QtGui.QLabel("Export File Type")
+			self.exportType = QtGui.QLineEdit("")
+			self.exportType.setText("stl")
+			self.other_layout.addRow(self.exportTypeLabel, self.exportType)
+
+			self.exportLocationLabel = QtGui.QLabel("Export Location")
+			self.exportLocation = QtGui.QLineEdit("")
+			self.exportLocation.setText("exports")
+			self.other_layout.addRow(self.exportLocationLabel, self.exportLocation)
+
+			self.exportAllMarkedButton = QtGui.QPushButton("Export All Marked")
+			self.exportAllMarkedButton.setToolTip("To Mark a part for exporting, it's `Label2` property must include the word `Export`/`export`.")
+			self.other_layout.addRow(self.exportAllMarkedButton)
+			self.exportAllMarkedButton.clicked.connect(self.exportAllMarked)
+
 			self.setLayout(self.layout)
 
 
@@ -151,6 +170,19 @@ def usefulPanelsMain(name):
 						if contents.startswith("="):
 							callback(i, doc, o, cell, contents)
 				i+=1
+
+
+		def exportAllMarked(self):
+			exportLocation = self.exportLocation.text()
+			exportType = self.exportType.text()
+			objects = self.getAllObjects()
+			for doc, obj in objects:
+				if "Export" in obj.Label2 or "export" in obj.Label2:
+					filename = exportLocation + "/" + doc + "-" + obj.Label + "." + exportType
+					command = "export" + exportType.capitalize()
+					func = getattr(obj.Shape, command)
+					func(filename)
+					print("Exported: "+ filename)
 
 		def checkAll(self):
 			replacement = self.aliasReplaceTerm.text()

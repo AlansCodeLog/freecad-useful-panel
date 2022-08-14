@@ -11,6 +11,7 @@ Freecad addon that does several useful things (am too lazy to create seperate ad
 	- Has a preview of the replace text, and matches can be omitted via a checkbox.
 	- **CAREFUL:** This is a simple text replacement, and the outputted expression is not guaranteed to be valid.
 
+- Provides a way to export all "marked" objects. Marking is done by including the word "Export" in the part's `Label2` property.
 
 ### Notes:
 - I suggest disabling loading partial documents if using replace in all documents. (`General => Document => Document objects => Disable partial loading of external linked objects`). I've not tested this with partially loaded docs and I've had problems with them with other addons so don't use partial loading.
