@@ -3,22 +3,27 @@
 import __main__
 import FreeCADGui as Gui
 
-test = False # for intellisense arrafasdfasdf
-def usefulPanelsMain(name):
+# def message(txt):
+# 	msg = QtGui.QMessageBox()
+# 	msg.setText(str(txt))
+# 	msg.exec()
+
+def useful_panels_main(name):
 	if name == "NoneWorkbench":
 		return
 	import __main__
-	Gui.getMainWindow().workbenchActivated.disconnect(__main__.usefulPanelMain)
+	Gui.getMainWindow().workbenchActivated.disconnect(__main__.useful_panels_main)
 
 	import math
 	import re
 
 	from PySide import QtCore, QtGui
 
-
 	cell_regex = re.compile("^[A-Z]+[0-9]+$")
+
 	def monospace(text):
-		return "<pre>"+text+"</pre>"
+		return "<pre>" + text + "</pre>"
+
 	class MainWidget(QtGui.QWidget):
 
 		def __init__(self):
@@ -30,121 +35,119 @@ def usefulPanelsMain(name):
 			self.initUI()
 
 		def initUI(self):
-			self.layout = QtGui.QVBoxLayout()
-			self.layout.setContentsMargins(0, 0, 0, 0)
+			self.main_layout = QtGui.QVBoxLayout()
+			self.main_layout.setContentsMargins(0, 0, 0, 0)
 			# sld = QtGui.QSlider(QtCore.Qt.Horizontal, self)
 			# sld.setFocusPolicy(QtCore.Qt.NoFocus)
 			# sld.setRange(1, 750)
 			# sld.setValue(75)
 			# sld.valueChanged.connect(self.sliderChanged)
 
-			# self.layout.addWidget(sld)
-			self.countTitleLabel = QtGui.QLabel(monospace("Selection Count: 0"))
-			self.layout.addWidget(self.countTitleLabel)
+			# self.main_layout.addWidget(sld)
+			self.cont_title_label = QtGui.QLabel(monospace("Selection Count: 0"))
+			self.main_layout.addWidget(self.cont_title_label)
 
-			self.countLabel = QtGui.QLabel("")
-			self.countLabel.setVisible(False)
-			self.layout.addWidget(self.countLabel)
+			self.count_label = QtGui.QLabel("")
+			self.count_label.setVisible(False)
+			self.main_layout.addWidget(self.count_label)
 
-			self.distanceLabel = QtGui.QLabel("")
-			self.distanceLabel.setVisible(False)
-			self.layout.addWidget(self.distanceLabel)
+			self.distance_label = QtGui.QLabel("")
+			self.distance_label.setVisible(False)
+			self.main_layout.addWidget(self.distance_label)
 
 			self.search_layout = QtGui.QFormLayout()
 			self.search_layout.setContentsMargins(0, 0, 0, 0)
-			self.layout.addLayout(self.search_layout)
+			self.main_layout.addLayout(self.search_layout)
 
-			self.aliasResultLabel = QtGui.QLabel("Search for Alias")
-			self.aliasSearchTerm = QtGui.QLineEdit("")
-			self.search_layout.addRow(self.aliasResultLabel, self.aliasSearchTerm)
-			self.aliasSearchTerm.textChanged.connect(self.searchAlias)
+			self.alias_result_label = QtGui.QLabel("Search for Alias")
+			self.alias_search_term = QtGui.QLineEdit("")
+			self.search_layout.addRow(self.alias_result_label, self.alias_search_term)
+			self.alias_search_term.textChanged.connect(self.search_alias)
 
-			self.aliasReplaceLabel = QtGui.QLabel("Replace Alias With")
-			self.aliasReplaceTerm = QtGui.QLineEdit("")
-			self.search_layout.addRow(self.aliasReplaceLabel, self.aliasReplaceTerm)
-			self.aliasReplaceTerm.textChanged.connect(self.searchAlias)
+			self.alias_replace_label = QtGui.QLabel("Replace Alias With")
+			self.alias_replace_term = QtGui.QLineEdit("")
+			self.search_layout.addRow(self.alias_replace_label, self.alias_replace_term)
+			self.alias_replace_term.textChanged.connect(self.search_alias)
 
 			self.options_layout = QtGui.QHBoxLayout()
 			self.options_layout.setContentsMargins(0, 0, 0, 0)
 
-			self.aliasSearchGlobal = QtGui.QCheckBox("Search All Documents")
-			self.options_layout.addWidget(self.aliasSearchGlobal)
-			self.aliasSearchGlobal.setChecked(True)
-			self.aliasSearchGlobal.stateChanged.connect(self.searchAlias)
+			self.alias_search_global = QtGui.QCheckBox("Search All Documents")
+			self.options_layout.addWidget(self.alias_search_global)
+			self.alias_search_global.setChecked(True)
+			self.alias_search_global.stateChanged.connect(self.search_alias)
 
 			self.includeSpreadsheet = QtGui.QCheckBox("Include Spreadsheets")
 			self.options_layout.addWidget(self.includeSpreadsheet)
 			self.includeSpreadsheet.setChecked(True)
-			self.includeSpreadsheet.stateChanged.connect(self.searchAlias)
+			self.includeSpreadsheet.stateChanged.connect(self.search_alias)
 
 			self.search_layout.addRow(self.options_layout)
-
 
 			# BUTTONS
 			self.buttons_layout = QtGui.QHBoxLayout()
 			self.buttons_layout.setContentsMargins(0, 0, 0, 0)
 
-			self.aliasCheckAllButton = QtGui.QPushButton("Check All")
-			self.buttons_layout.addWidget(self.aliasCheckAllButton)
-			self.aliasCheckAllButton.clicked.connect(self.checkAll)
+			self.alias_check_all_button = QtGui.QPushButton("Check All")
+			self.buttons_layout.addWidget(self.alias_check_all_button)
+			self.alias_check_all_button.clicked.connect(self.check_all)
 
-			self.aliasUncheckAllButton = QtGui.QPushButton("Uncheck All")
-			self.buttons_layout.addWidget(self.aliasUncheckAllButton)
-			self.aliasUncheckAllButton.clicked.connect(self.uncheckAll)
+			self.alias_uncheck_all_button = QtGui.QPushButton("Uncheck All")
+			self.buttons_layout.addWidget(self.alias_uncheck_all_button)
+			self.alias_uncheck_all_button.clicked.connect(self.uncheck_all)
 
-			self.aliasReplaceButton = QtGui.QPushButton("Replace")
-			self.buttons_layout.addWidget(self.aliasReplaceButton)
-			self.aliasReplaceButton.clicked.connect(self.replaceAlias)
+			self.alias_replace_button = QtGui.QPushButton("Replace")
+			self.buttons_layout.addWidget(self.alias_replace_button)
+			self.alias_replace_button.clicked.connect(self.replace_alias)
 
 			self.search_layout.addRow(self.buttons_layout)
 
-
-			self.aliasResultsTable = QtGui.QTableWidget()
-			self.aliasResultsTable.setHorizontalHeaderLabels(
+			# Table
+			self.alias_results_table = QtGui.QTableWidget()
+			self.alias_results_table.setHorizontalHeaderLabels(
 				("Object", "Property", "Expression"))
 			sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
 			sizePolicy.setHorizontalStretch(1)
 			sizePolicy.setVerticalStretch(1)
-			self.aliasResultsTable.setSizePolicy(sizePolicy)
-			self.aliasResultsTable.horizontalHeader().setStretchLastSection(True)
-			self.aliasResultsTable.horizontalHeader().setDefaultSectionSize(100)
-			self.aliasResultsTable.setWordWrap(True)
+			self.alias_results_table.setSizePolicy(sizePolicy)
+			self.alias_results_table.horizontalHeader().setStretchLastSection(True)
+			self.alias_results_table.horizontalHeader().setDefaultSectionSize(100)
+			self.alias_results_table.setWordWrap(True)
 
-			self.aliasResultsTable.horizontalHeader().sectionResized.connect(self.resizeRows)
+			self.alias_results_table.horizontalHeader().sectionResized.connect(self.resize_rows)
 
-			self.layout.addWidget(self.aliasResultsTable)
-
+			self.main_layout.addWidget(self.alias_results_table)
 
 			# spacer = verticalSpacer = QtGui.QSpacerItem(
 			# 	0, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-			# self.layout.addItem(spacer)
+			# self.main_layout.addItem(spacer)
 
 			self.other_layout = QtGui.QFormLayout()
 			self.other_layout.setContentsMargins(0, 0, 0, 0)
-			self.layout.addLayout(self.other_layout)
+			self.main_layout.addLayout(self.other_layout)
 
-			self.exportTypeLabel = QtGui.QLabel("Export File Type")
+			self.export_type_label = QtGui.QLabel("Export File Type")
 			self.exportType = QtGui.QLineEdit("")
 			self.exportType.setText("stl")
-			self.other_layout.addRow(self.exportTypeLabel, self.exportType)
+			self.other_layout.addRow(self.export_type_label, self.exportType)
 
-			self.exportLocationLabel = QtGui.QLabel("Export Location")
-			self.exportLocation = QtGui.QLineEdit("")
-			self.exportLocation.setText("exports")
-			self.other_layout.addRow(self.exportLocationLabel, self.exportLocation)
+			self.export_location_label = QtGui.QLabel("Export Location")
+			self.export_location = QtGui.QLineEdit("")
+			self.export_location.setText("exports")
+			self.other_layout.addRow(self.export_location_label, self.export_location)
 
-			self.exportAllMarkedButton = QtGui.QPushButton("Export All Marked")
-			self.exportAllMarkedButton.setToolTip("To Mark a part for exporting, it's `Label2` property must include the word `Export`/`export`.")
-			self.other_layout.addRow(self.exportAllMarkedButton)
-			self.exportAllMarkedButton.clicked.connect(self.exportAllMarked)
+			self.export_all_marked_button = QtGui.QPushButton("Export All Marked")
+			self.export_all_marked_button.setToolTip("To Mark a part for exporting, it's `Label2` property must include the word `Export`/`export`.")
+			self.other_layout.addRow(self.export_all_marked_button)
+			self.export_all_marked_button.clicked.connect(self.export_all_marked)
 
-			self.setLayout(self.layout)
+			self.setLayout(self.main_layout)
 
+		def resize_rows(self):
+			self.alias_results_table.resizeRowsToContents()
 
-		def resizeRows(self):
-			self.aliasResultsTable.resizeRowsToContents()
-		def getAllObjects(self):
-			search_global = self.aliasSearchGlobal.checkState()
+		def get_all_object(self):
+			search_global = self.alias_search_global.checkState()
 			objects = []
 			docs = []
 			if (search_global):
@@ -157,8 +160,10 @@ def usefulPanelsMain(name):
 					objects.append((doc.Name, obj))
 			return objects
 
-		def searchForExpressions(self, callback=None):
-			objects = self.getAllObjects()
+		def search_for_expressions(self, callback=None):
+			if callback is None:
+				return #should never happen
+			objects = self.get_all_object()
 			i = 0
 			for doc, o in objects:
 				if hasattr(o, "ExpressionEngine"):
@@ -172,40 +177,45 @@ def usefulPanelsMain(name):
 				i+=1
 
 
-		def exportAllMarked(self):
-			exportLocation = self.exportLocation.text()
-			exportType = self.exportType.text()
-			objects = self.getAllObjects()
+		def export_all_marked(self):
+			export_location = self.export_location.text()
+			export_type = self.exportType.text()
+			objects = self.get_all_object()
 			for doc, obj in objects:
 				if "Export" in obj.Label2 or "export" in obj.Label2:
-					filename = exportLocation + "/" + doc + "-" + obj.Label + "." + exportType
-					command = "export" + exportType.capitalize()
+					objName = doc + "-" + obj.Label
+					filename = export_location + "/" + objName + "." + export_type
+					command = "export" + export_type.capitalize()
 					func = getattr(obj.Shape, command)
-					func(filename)
-					print("Exported: "+ filename)
+					try:
+						func(filename)
+						print("Exported: "+ filename)
+					except Exception as e:
+						print("Failed to export :" + objName)
+						print(e)
 
-		def checkAll(self):
-			replacement = self.aliasReplaceTerm.text()
+		def check_all(self):
+			replacement = self.alias_replace_term.text()
 			show_replace = len(replacement) > 0
 			if show_replace:
-				for i in range(self.aliasResultsTable.rowCount()):
-					cell = self.aliasResultsTable.cellWidget(i, 0)
+				for i in range(self.alias_results_table.rowCount()):
+					cell = self.alias_results_table.cellWidget(i, 0)
 					cell.setChecked(True)
 
-		def uncheckAll(self):
-			replacement = self.aliasReplaceTerm.text()
+		def uncheck_all(self):
+			replacement = self.alias_replace_term.text()
 			show_replace = len(replacement) > 0
 			if show_replace:
-				for i in range(self.aliasResultsTable.rowCount()):
-					cell = self.aliasResultsTable.cellWidget(i, 0)
+				for i in range(self.alias_results_table.rowCount()):
+					cell = self.alias_results_table.cellWidget(i, 0)
 					cell.setChecked(False)
 
-		def replaceAlias(self):
-			name = self.aliasSearchTerm.text()
-			replacement = self.aliasReplaceTerm.text()
+		def replace_alias(self):
+			name = self.alias_search_term.text()
+			replacement = self.alias_replace_term.text()
 			w_spreadsheet = self.includeSpreadsheet.checkState()
 			def search(i, doc, o, prop, exp):
-				cell = self.aliasResultsTable.cellWidget(i, 0)
+				cell = self.alias_results_table.cellWidget(i, 0)
 				if cell.checkState() == False:
 					return
 				if name in exp:
@@ -215,17 +225,16 @@ def usefulPanelsMain(name):
 					else:
 						o.setExpression(prop, new_expression)
 
-			self.searchForExpressions(search)
+			self.search_for_expressions(search)
 
-			self.searchAlias()  # refresh
+			self.search_alias()  # refresh
 
-		def searchAlias(self):
-			name = self.aliasSearchTerm.text()
-			replacement = self.aliasReplaceTerm.text()
-			search_global = self.aliasSearchGlobal.checkState()
+		def search_alias(self):
+			name = self.alias_search_term.text()
+			replacement = self.alias_replace_term.text()
+			search_global = self.alias_search_global.checkState()
 			found = []
 			show_replace = len(replacement) > 0
-			objects = self.getAllObjects()
 
 			def search(i, doc, o, prop, exp):
 				if name in exp:
@@ -234,73 +243,67 @@ def usefulPanelsMain(name):
 						item.append(exp.replace(name, replacement))
 					found.append(item)
 
-			self.searchForExpressions(search)
-
+			self.search_for_expressions(search)
 
 			header = ["Obj", "Prop", "Exp"]
-			addColumn = 0
+			add_column = 0
 			if search_global:
 				header.insert(0, "Doc")
 			if show_replace:
 				header.insert(0, "[ ]")
 				header.insert(len(header), "Replacement")
-				addColumn = 1
+				add_column = 1
 
-			sameCols = self.aliasResultsTable.columnCount() == len(header)
-			sameRows = self.aliasResultsTable.rowCount() == len(found)
+			same_cols = self.alias_results_table.columnCount() == len(header)
+			same_rows = self.alias_results_table.rowCount() == len(found)
 
-			if not sameCols:
-				self.aliasResultsTable.clear()
-			self.aliasResultsTable.setRowCount(len(found))
-			self.aliasResultsTable.setColumnCount(len(header))
-			self.aliasResultsTable.setHorizontalHeaderLabels(tuple(header))
+			if not same_cols:
+				self.alias_results_table.clear()
+			self.alias_results_table.setRowCount(len(found))
+			self.alias_results_table.setColumnCount(len(header))
+			self.alias_results_table.setHorizontalHeaderLabels(tuple(header))
 
 			for row, item in enumerate(found):
-				if show_replace and (not sameCols or not sameRows):
+				if show_replace and (not same_cols or not same_rows):
 					checkbox = QtGui.QCheckBox("")
 					checkbox.setChecked(True)
-					self.aliasResultsTable.setCellWidget(row, 0, checkbox)
+					self.alias_results_table.setCellWidget(row, 0, checkbox)
 				for col, part in enumerate(item):
 					newItem = QtGui.QTableWidgetItem(part)
-					self.aliasResultsTable.setItem(row, col+addColumn, newItem)
+					self.alias_results_table.setItem(row, col+add_column, newItem)
 
 			if show_replace:
-				self.aliasResultsTable.setColumnWidth(0, 10)
+				self.alias_results_table.setColumnWidth(0, 10)
 
-			self.aliasResultsTable.resizeRowsToContents()
+			self.alias_results_table.resizeRowsToContents()
 			# self.aliasResultsTable.resizeColumnsToContents()
 
-		def setSelectionInfo(self,
-                       count,
-                       sum,
-                       distances
-                       ):
-			self.countTitleLabel.setText(monospace("Selection Count:" +count))
-			self.countLabel.setText(monospace(sum + "mm Selected"))
-			self.countLabel.setVisible(True)
-			if distances != None:
-				self.distanceLabel.setVisible(True)
-				(distance, x_distance, y_distance, z_distance, xmin_distance, ymin_distance, zmin_distance, xmax_distance, ymax_distance, zmax_distance) = distances
-				# longest_normal = len(min([x_distance, y_distance, z_distance], key=lambda x: len(x)))
-				# longest_min = len(min([xmin_distance, ymin_distance, zmin_distance], key=lambda x: len(x)))
-				# longest_max = len(min([xmax_distance, ymax_distance, zmax_distance], key=lambda x: len(x)))
-				self.distanceLabel.setText(monospace(
+		def set_selection_info(self, count, sum, distances):
+			self.cont_title_label.setText(monospace("Selection Count:" +count))
+			self.count_label.setText(monospace(sum + "mm Selected"))
+			self.count_label.setVisible(True)
+			if distances is not None:
+				self.distance_label.setVisible(True)
+				(distance, x_distance, y_distance, z_distance,
+				 xmin_distance, ymin_distance, zmin_distance,
+				 xmax_distance, ymax_distance, zmax_distance) = distances
+				self.distance_label.setText(monospace(
 					"Distance: " + distance + "mm" + "\n" +
 					"X " + x_distance + "mm (Min " + xmin_distance + "mm, Max " + xmax_distance + "mm)" + "\n" +
 					"Y " + y_distance + "mm (Min " + ymin_distance + "mm, Max " + ymax_distance + "mm)" + "\n" +
 					"Z " + z_distance + "mm (Min " + zmin_distance + "mm, Max " + zmax_distance + "mm)" + "\n"
 				))
 			else:
-				self.distanceLabel.setText("")
-				self.distanceLabel.setVisible(False)
+				self.distance_label.setText("")
+				self.distance_label.setVisible(False)
 
-		def setNoSelection(self):
-			self.countTitleLabel.setText(monospace("Selection Count: 0"))
+		def set_no_selection(self):
+			self.cont_title_label.setText(monospace("Selection Count: 0"))
 			# self.countLabel.setText(monospace("0 mm Selected"))
-			self.countLabel.setVisible(False)
-			self.distanceLabel.setVisible(False)
+			self.count_label.setVisible(False)
+			self.distance_label.setVisible(False)
 
-		def sliderChanged(self, value):
+		def slider_changed(self, value):
 			# print(value)
 			return
 
@@ -310,40 +313,35 @@ def usefulPanelsMain(name):
 			self.disableObserver = False
 
 		def addSelection(self, doc, obj, sub, pnt):
-			self.checkSelection()
+			self.check_selection()
 
 		def removeSelection(self, doc, obj, sub):
-			self.checkSelection()
+			self.check_selection()
 
 		def setSelection(self, doc):
-			self.checkSelection()
+			self.check_selection()
 
 		def clearSelection(self, doc):
-			self.checkSelection()
+			self.check_selection()
 
-		def checkSelection(self):
+		def check_selection(self):
 			selections = Gui.Selection.getSelectionEx()
 
-			# def message(txt):
-			# 	msg = QtGui.QMessageBox()
-			# 	msg.setText(str(txt))
-			# 	msg.exec()
-
-			def round_to(n, x = 1000):
+			def round_to(n, x=1000):
 				return "{:.3f}".format(math.ceil(n * x) / x)
 				# return math.ceil(n * x) / x
 
 			ok = False
+			selection = []
 			if len(selections) == 0:
-				self.widget.setNoSelection()
+				self.widget.set_no_selection()
 			else:
 				selection = [item for selection in selections for item in selection.SubObjects]
 
 				if len(selection) == 0:
-					self.widget.setNoSelection()
+					self.widget.set_no_selection()
 				else:
 					ok = True
-
 			if ok:
 				sum = 0
 				count = str(len(selection))
@@ -351,7 +349,6 @@ def usefulPanelsMain(name):
 					sum += edge.Length
 
 				sum = round_to(sum)
-
 
 				distances = None
 				distance = None
@@ -368,6 +365,8 @@ def usefulPanelsMain(name):
 				if len(selection) == 2:
 					selcenter1 = selection[0].BoundBox.Center
 					selcenter2 = selection[1].BoundBox.Center
+					print(selcenter1)
+					print(selcenter2)
 
 					distance = round_to(selcenter1.distanceToPoint(selcenter2))
 					x_distance = round_to(abs(selcenter1.x - selcenter2.x))
@@ -381,10 +380,11 @@ def usefulPanelsMain(name):
 					zmin_distance = round_to(abs(selection[0].BoundBox.ZMin - selection[1].BoundBox.ZMin))
 					zmax_distance = round_to(abs(selection[0].BoundBox.ZMax - selection[1].BoundBox.ZMax))
 
-					distances = (distance, x_distance, y_distance, z_distance, xmin_distance,
-					             ymin_distance, zmin_distance, xmax_distance, ymax_distance, zmax_distance)
+					distances = (distance, x_distance, y_distance, z_distance,
+					             xmin_distance, ymin_distance, zmin_distance,
+					             xmax_distance, ymax_distance, zmax_distance)
 
-				self.widget.setSelectionInfo(
+				self.widget.set_selection_info(
 					count, sum, distances)
 
 	app = QtGui.qApp
@@ -400,7 +400,7 @@ def usefulPanelsMain(name):
 
 # The following 2 lines are important because InitGui.py files are passed to the exec() function...
 # ...and the runMacro wouldn't be visible outside. So explicitly add it to __main__
-__main__.usefulPanelMain = usefulPanelsMain
+__main__.useful_panels_main = useful_panels_main
 
 # Connect the function that runs the macro to the appropriate signal
-Gui.getMainWindow().workbenchActivated.connect(usefulPanelMain)
+Gui.getMainWindow().workbenchActivated.connect(useful_panels_main)

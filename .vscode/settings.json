@@ -1,0 +1,6 @@
+{
+	"python.pipenvPath": ".venv",
+	"python.defaultInterpreterPath": ".venv/bin/python",
+	"python.linting.enabled": true,
+	"python.linting.flake8Enabled": true,
+}

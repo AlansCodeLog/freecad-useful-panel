@@ -18,3 +18,22 @@ Freecad addon that does several useful things (am too lazy to create seperate ad
 
 ### Todos:
 	- [ ] At some point I would like to see if it's possible to move the measurements to the viewport a la Fusion360.
+
+
+### Development
+
+```sh
+python3 -m venv .venv
+pip install -r requirements
+
+```
+For intellisence create `.env` with:
+Note: Something is still off / not completely working with PySide impports...
+
+```
+FREECAD_LIB=/usr/lib/freecad/lib
+FREECAD_MOD=/path/to/Mod
+FREECAD_STUBS=/path/to/stubs (e.g. generated with freecad-stubs)
+FREECAD_EXT=/usr/lib/freecad/Ext
+PYTHONPATH=${FREECAD_MOD}:${FREECAD_LIB}:${FREECAD_EXT}:${PYTHONPATH}
+```
