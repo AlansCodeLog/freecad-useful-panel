@@ -288,10 +288,10 @@ def useful_panels_main(name):
 				 xmin_distance, ymin_distance, zmin_distance,
 				 xmax_distance, ymax_distance, zmax_distance) = distances
 				self.distance_label.setText(monospace(
-					"Distance: " + distance + "mm" + "\n" +
-					"X " + x_distance + "mm (Min " + xmin_distance + "mm, Max " + xmax_distance + "mm)" + "\n" +
-					"Y " + y_distance + "mm (Min " + ymin_distance + "mm, Max " + ymax_distance + "mm)" + "\n" +
-					"Z " + z_distance + "mm (Min " + zmin_distance + "mm, Max " + zmax_distance + "mm)" + "\n"
+					"Distance: " + distance + " mm" + "\n" +
+					"X " + x_distance + " mm (Min: " + xmin_distance + " mm, Max: " + xmax_distance + " mm)" + "\n" +
+					"Y " + y_distance + " mm (Min: " + ymin_distance + " mm, Max: " + ymax_distance + " mm)" + "\n" +
+					"Z " + z_distance + " mm (Min: " + zmin_distance + " mm, Max: " + zmax_distance + " mm)" + "\n"
 				))
 			else:
 				self.distance_label.setText("")
@@ -325,28 +325,48 @@ def useful_panels_main(name):
 			self.check_selection()
 
 		def check_selection(self):
-			selections = Gui.Selection.getSelectionEx()
+
+			gui_selections = Gui.Selection.getSelectionEx('', 0)
 
 			def round_to(n, x=1000):
-				return "{:.3f}".format(math.ceil(n * x) / x)
-				# return math.ceil(n * x) / x
+				# shrink very long numbers to scientific notation
+				# these large numbers can happen when selecting an LCS since it's bounding box seems to be of infinite dimensions.
+				if (n > 1000000000):
+					[num, exp] = "{:.3e}".format(n).split("e")
+					num = float(num)
+					num = "{:.3f}".format(math.ceil(num * x) / x).rstrip('0').rstrip('.')
+					exp = "x10<sup>" + exp.replace("+", "") + "</sup>"
+					return num+exp
+				return "{:.3f}".format(math.ceil(n * x) / x).rstrip('0').rstrip('.')
 
-			ok = False
-			selection = []
-			if len(selections) == 0:
+			sel_count = 0
+			for sel in gui_selections:
+				if sel.SubElementNames:
+					for path in sel.SubElementNames:
+						sel_count += 1
+
+
+			selections = []
+			if len(gui_selections) == 0:
 				self.widget.set_no_selection()
 			else:
-				selection = [item for selection in selections for item in selection.SubObjects]
+				for sel in gui_selections:
+					if sel.SubElementNames:
+						for path in sel.SubElementNames:
+							# we cannot use sel.getSubObjects because the coordinates of the selections might not be global (i.e. part design selection, links, etc)
+							# getGlobalPlacement cand be used for most cases, but is not reliable for links
+							# this seems to get a subobject with global coordinates every time.
+							obj = sel.Object.getSubObject(path, 0)
+							if obj.Length is None or obj.BoundBox is None:
+								print(obj)
+								return
+							selections.append(obj)
 
-				if len(selection) == 0:
-					self.widget.set_no_selection()
-				else:
-					ok = True
-			if ok:
 				sum = 0
-				count = str(len(selection))
-				for edge in selection:
-					sum += edge.Length
+				count = str(sel_count)
+
+				for (obj) in selections:
+					sum += obj.Length
 
 				sum = round_to(sum)
 
@@ -362,27 +382,27 @@ def useful_panels_main(name):
 				ymax_distance = None
 				zmax_distance = None
 
-				if len(selection) == 2:
-					selcenter1 = selection[0].BoundBox.Center
-					selcenter2 = selection[1].BoundBox.Center
-					print(selcenter1)
-					print(selcenter2)
+				if sel_count == 2:
+					sel1 = selections[0].BoundBox
+					sel2 = selections[1].BoundBox
+					p1 = sel1.Center
+					p2 = sel2.Center
 
-					distance = round_to(selcenter1.distanceToPoint(selcenter2))
-					x_distance = round_to(abs(selcenter1.x - selcenter2.x))
-					y_distance = round_to(abs(selcenter1.y - selcenter2.y))
-					z_distance = round_to(abs(selcenter1.z - selcenter2.z))
+					distance = round_to(p1.distanceToPoint(p2))
+					x_distance = round_to(abs(p1.x - p2.x))
+					y_distance = round_to(abs(p1.y - p2.y))
+					z_distance = round_to(abs(p1.z - p2.z))
 
-					xmin_distance = round_to(abs(selection[0].BoundBox.XMin - selection[1].BoundBox.XMin))
-					xmax_distance = round_to(abs(selection[0].BoundBox.XMax - selection[1].BoundBox.XMax))
-					ymin_distance = round_to(abs(selection[0].BoundBox.YMin - selection[1].BoundBox.YMin))
-					ymax_distance = round_to(abs(selection[0].BoundBox.YMax - selection[1].BoundBox.YMax))
-					zmin_distance = round_to(abs(selection[0].BoundBox.ZMin - selection[1].BoundBox.ZMin))
-					zmax_distance = round_to(abs(selection[0].BoundBox.ZMax - selection[1].BoundBox.ZMax))
+					xmin_distance = round_to(abs(sel1.XMin - sel2.XMin))
+					xmax_distance = round_to(abs(sel1.XMax - sel2.XMax))
+					ymin_distance = round_to(abs(sel1.YMin - sel2.YMin))
+					ymax_distance = round_to(abs(sel1.YMax - sel2.YMax))
+					zmin_distance = round_to(abs(sel1.ZMin - sel2.ZMin))
+					zmax_distance = round_to(abs(sel1.ZMax - sel2.ZMax))
 
 					distances = (distance, x_distance, y_distance, z_distance,
-					             xmin_distance, ymin_distance, zmin_distance,
-					             xmax_distance, ymax_distance, zmax_distance)
+									xmin_distance, ymin_distance, zmin_distance,
+									xmax_distance, ymax_distance, zmax_distance)
 
 				self.widget.set_selection_info(
 					count, sum, distances)
