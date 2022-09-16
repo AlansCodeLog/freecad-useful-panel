@@ -1,6 +1,7 @@
 
 
 import __main__
+import FreeCAD
 import FreeCADGui as Gui
 
 # def message(txt):
@@ -15,8 +16,10 @@ def useful_panels_main(name):
 	Gui.getMainWindow().workbenchActivated.disconnect(__main__.useful_panels_main)
 
 	import math
+	import os
 	import re
 
+	import Mesh
 	from PySide import QtCore, QtGui
 
 	cell_regex = re.compile("^[A-Z]+[0-9]+$")
@@ -181,14 +184,27 @@ def useful_panels_main(name):
 			export_location = self.export_location.text()
 			export_type = self.exportType.text()
 			objects = self.get_all_object()
+			cannotExport = []
+			for doc, obj in objects:
+				if "Export" in obj.Label2 or "export" in obj.Label2:
+					try:
+						obj.touch()
+					except Exception as e:
+						print(e)
+						cannotExport.append(obj)
+			App.ActiveDocument.recompute()
+			currentDir = os.path.dirname(FreeCAD.ActiveDocument.FileName)
 			for doc, obj in objects:
 				if "Export" in obj.Label2 or "export" in obj.Label2:
 					objName = doc + "-" + obj.Label
-					filename = export_location + "/" + objName + "." + export_type
-					command = "export" + export_type.capitalize()
-					func = getattr(obj.Shape, command)
+					if (obj in cannotExport):
+						print(objName + "has errors, cannot export.")
+						continue
+					filename = os.path.join(currentDir, export_location + "/" + objName + "." + export_type)
 					try:
-						func(filename)
+						if os.path.exists(filename):
+  							os.remove(filename)
+						Mesh.export([obj],filename)
 						print("Exported: "+ filename)
 					except Exception as e:
 						print("Failed to export :" + objName)

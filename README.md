@@ -12,6 +12,8 @@ Freecad addon that does several useful things (am too lazy to create seperate ad
 	- **CAREFUL:** This is a simple text replacement, and the outputted expression is not guaranteed to be valid.
 
 - Provides a way to export all "marked" objects. Marking is done by including the word "Export" in the part's `Label2` property.
+	- Path is relative to the active document. Parts are named `{file name}-{object name}.{extension}`.
+	- **The file is always overwritten if it exists.**
 
 ### Notes:
 - I suggest disabling loading partial documents if using replace in all documents. (`General => Document => Document objects => Disable partial loading of external linked objects`). I've not tested this with partially loaded docs and I've had problems with them with other addons so don't use partial loading.
