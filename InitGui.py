@@ -152,6 +152,8 @@ def useful_panels_main(name):
 
 			self.setLayout(self.main_layout)
 
+			self.results = []
+
 		def resize_rows(self):
 			self.alias_results_table.resizeRowsToContents()
 
@@ -170,6 +172,7 @@ def useful_panels_main(name):
 			return objects
 
 		def search_for_expressions(self, callback=None):
+			w_spreadsheet = self.includeSpreadsheet.checkState()
 			if callback is None:
 				return #should never happen
 			objects = self.get_all_object()
@@ -178,7 +181,7 @@ def useful_panels_main(name):
 				if hasattr(o, "ExpressionEngine"):
 					for exp in o.ExpressionEngine:
 						callback(i, doc, o, exp[0], exp[1])
-				if o.TypeId == "Spreadsheet::Sheet":
+				if o.TypeId == "Spreadsheet::Sheet" and w_spreadsheet:
 					for cell in filter(cell_regex.search, o.PropertiesList):
 						contents = o.getContents(cell)
 						if contents.startswith("="):
@@ -235,19 +238,20 @@ def useful_panels_main(name):
 		def replace_alias(self):
 			name = self.alias_search_term.text()
 			replacement = self.alias_replace_term.text()
-			w_spreadsheet = self.includeSpreadsheet.checkState()
 			def search(i, doc, o, prop, exp):
 				cell = self.alias_results_table.cellWidget(i, 0)
-				if cell.checkState() == False:
+				if cell.isChecked() == False:
 					return
 				if name in exp:
 					new_expression = exp.replace(name, replacement)
-					if o.TypeId == "Spreadsheet::Sheet" and w_spreadsheet:
+					if o.TypeId == "Spreadsheet::Sheet":
 						o.set(prop, new_expression)
 					else:
 						o.setExpression(prop, new_expression)
 
-			self.search_for_expressions(search)
+			for i, entry in enumerate(self.results):
+				[doc, o, prop, exp] = entry
+				search(i, doc, o, prop, exp)
 
 			self.search_alias()  # refresh
 
@@ -258,10 +262,10 @@ def useful_panels_main(name):
 			found = []
 			show_replace = len(replacement) > 0
 
-			self.objects = []
+			self.results = []
 			def search(i, doc, o, prop, exp):
 				if name in exp:
-					self.objects.append([doc, o])
+					self.results.append([doc, o, prop, exp])
 					item = [o.Label, prop, exp]
 					if search_global:
 						item.insert(0, doc)
@@ -307,7 +311,7 @@ def useful_panels_main(name):
 			doFocus = self.focusObjectOnSelection.checkState()
 			if not doFocus:
 				return
-			item = self.objects[row]
+			item = self.results[row]
 			doc = item[0]
 			o = item[1]
 			App.setActiveDocument(doc)
