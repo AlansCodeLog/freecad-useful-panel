@@ -85,6 +85,10 @@ def useful_panels_main(name):
 			self.includeSpreadsheet.setChecked(True)
 			self.includeSpreadsheet.stateChanged.connect(self.search_alias)
 
+			self.focusObjectOnSelection = QtGui.QCheckBox("Focus Object on Selection")
+			self.options_layout.addWidget(self.focusObjectOnSelection)
+			self.focusObjectOnSelection.setChecked(True)
+
 			self.search_layout.addRow(self.options_layout)
 
 			# BUTTONS
@@ -254,8 +258,10 @@ def useful_panels_main(name):
 			found = []
 			show_replace = len(replacement) > 0
 
+			self.objects = []
 			def search(i, doc, o, prop, exp):
 				if name in exp:
+					self.objects.append([doc, o])
 					item = [o.Label, prop, exp]
 					if search_global:
 						item.insert(0, doc)
@@ -297,6 +303,19 @@ def useful_panels_main(name):
 
 			self.alias_results_table.resizeRowsToContents()
 			# self.aliasResultsTable.resizeColumnsToContents()
+		def table_cell_clicked(self, row, col):
+			doFocus = self.focusObjectOnSelection.checkState()
+			if not doFocus:
+				return
+			item = self.objects[row]
+			doc = item[0]
+			o = item[1]
+			App.setActiveDocument(doc)
+			App.ActiveDocument = App.getDocument(doc)
+			Gui.ActiveDocument = Gui.getDocument(doc)
+			Gui.Selection.clearSelection()
+			Gui.Selection.addSelection(o)
+			Gui.SendMsgToActiveView("ViewSelection")
 
 		def set_selection_info(self, count, sum, distances):
 			self.cont_title_label.setText(monospace("Selection Count:" +count))
