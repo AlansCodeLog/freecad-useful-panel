@@ -118,7 +118,9 @@ def useful_panels_main(name):
 			self.alias_results_table.setWordWrap(True)
 
 			self.alias_results_table.horizontalHeader().sectionResized.connect(self.resize_rows)
-
+			#disabled editing of cells
+			self.alias_results_table.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+			self.alias_results_table.cellClicked.connect(self.table_cell_clicked)
 			self.main_layout.addWidget(self.alias_results_table)
 
 			# spacer = verticalSpacer = QtGui.QSpacerItem(
@@ -254,7 +256,9 @@ def useful_panels_main(name):
 
 			def search(i, doc, o, prop, exp):
 				if name in exp:
-					item = [doc, o.Label, prop, exp]
+					item = [o.Label, prop, exp]
+					if search_global:
+						item.insert(0, doc)
 					if show_replace:
 						item.append(exp.replace(name, replacement))
 					found.append(item)
@@ -266,7 +270,7 @@ def useful_panels_main(name):
 			if search_global:
 				header.insert(0, "Doc")
 			if show_replace:
-				header.insert(0, "[ ]")
+				header.insert(0, "[ ]") #checkbox
 				header.insert(len(header), "Replacement")
 				add_column = 1
 
