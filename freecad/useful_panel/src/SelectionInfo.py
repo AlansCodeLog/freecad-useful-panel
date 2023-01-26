@@ -27,9 +27,16 @@ class SelectionInfo(QtGui.QWidget):
 		self.distance_label.setVisible(False)
 		layout.addWidget(self.distance_label)
 
-	def set_selection_info(self, count, sum, distances):
+	def set_selection_info(self, count, sum, distances, diameter):
+
 		self.count_title_label.setText(monospace("Selection Count:" + count))
-		self.count_label.setText(monospace(sum + "mm Selected"))
+		radius_text = ""
+		if (diameter != None):
+			radius_text = "Diameter: "+ diameter + "mm" + "\n"
+		self.count_label.setText(monospace(
+			sum + "mm Selected" + "\n" +
+			radius_text
+		))
 		self.count_label.setVisible(True)
 		if distances is not None:
 			self.distance_label.setVisible(True)
@@ -48,7 +55,6 @@ class SelectionInfo(QtGui.QWidget):
 
 	def set_no_selection(self):
 		self.count_title_label.setText(monospace("Selection Count: 0"))
-		# self.countLabel.setText(monospace("0 mm Selected"))
 		self.count_label.setVisible(False)
 		self.distance_label.setVisible(False)
 
@@ -70,7 +76,6 @@ class SelectionInfo(QtGui.QWidget):
 			self.check_selection()
 
 		def check_selection(self):
-
 			gui_selections = Gui.Selection.getSelectionEx('', 0) #type: ignore
 
 			def round_to(n, x=1000):
@@ -91,6 +96,7 @@ class SelectionInfo(QtGui.QWidget):
 						sel_count += 1
 
 			selections = []
+			found_radius = None
 			if len(gui_selections) == 0:
 				self.widget.set_no_selection()
 			else:
@@ -104,6 +110,8 @@ class SelectionInfo(QtGui.QWidget):
 							if obj is None or obj.Length is None or obj.BoundBox is None:
 								# print(obj, "why is this none", path, sel.SubElementNames, sel)
 								continue
+							if hasattr(obj, "Curve") and hasattr(obj.Curve, "Radius"):
+								found_radius = obj.Curve.Radius
 							selections.append(obj)
 
 				sum = 0
@@ -112,7 +120,6 @@ class SelectionInfo(QtGui.QWidget):
 				for (obj) in selections:
 					sum += obj.Length
 
-				sum = round_to(sum)
 
 				distances = None
 				distance = None
@@ -125,7 +132,9 @@ class SelectionInfo(QtGui.QWidget):
 				xmax_distance = None
 				ymax_distance = None
 				zmax_distance = None
-
+				diameter = None
+				if sel_count == 1 and found_radius:
+					diameter = round_to(found_radius * 2)
 				if sel_count == 2:
 					sel1 = selections[0].BoundBox
 					sel2 = selections[1].BoundBox
@@ -145,8 +154,10 @@ class SelectionInfo(QtGui.QWidget):
 					zmax_distance = round_to(abs(sel1.ZMax - sel2.ZMax))
 
 					distances = (distance, x_distance, y_distance, z_distance,
-                                            xmin_distance, ymin_distance, zmin_distance,
-                                            xmax_distance, ymax_distance, zmax_distance)
+									xmin_distance, ymin_distance, zmin_distance,
+									xmax_distance, ymax_distance, zmax_distance)
 
+
+				sum = round_to(sum)
 				self.widget.set_selection_info(
-					count, sum, distances)
+					count, sum, distances, diameter)

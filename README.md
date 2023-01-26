@@ -1,18 +1,19 @@
 FreeCAD addon that does several useful things (am too lazy to create seperate addons):
 
-![](./freecad/useful_panel/resources/Screenshot.png)
+![](./freecad/useful_panel/resources/Screenshot-FindReplace.png)
 
 - Displays the current selection length.
 - Displays the distances between any two selections (similar to [Part Measure Linear](https://wiki.freecad.org/Part_Measure_Linear)).
 	- Plus additional X/Y/Z Min/Max measurements (i.e. the difference between the bounding edges of the selection). Sometimes the distance between two selections can be zero, but different size (e.g. two circles on top of each other, but their diameters are different). The min/max distances show this.
+	- Now also supports showing the diameter when selecting circular edges.
 
 https://user-images.githubusercontent.com/26168490/190905158-77e2890d-12f2-4be0-8a0a-e1d9850efb63.mp4
-
 
 - Provides a way to find and replace text in expressions. Either in all documents, or only the current. Can also optionally replace text in spreadsheets.
 	- Incredibly useful if you have a lot of variables and like to rename things.
 	- Has a preview of the replace text, and matches can be omitted via a checkbox.
 	- **CAREFUL:** This is a simple text replacement, and the outputted expression is not guaranteed to be valid.
+	- This can also be used to find objects that use a variable. Clicking on the row will bring it into focus if `Focus Object on Selection` is enabled.
 
 - Provides a way to export all "marked" objects. Marking is done by including the word "Export" in the part's `Label2` property.
 	- Path is relative to the active document. Parts are named `{file name}-{object name}.{extension}`.
