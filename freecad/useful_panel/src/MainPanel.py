@@ -5,6 +5,35 @@ from freecad.useful_panel.src.SelectionInfo import SelectionInfo
 from freecad.useful_panel.src.SearchTab import SearchTab
 from freecad.useful_panel.src.ExportTab import ExportTab
 
+# reeeeee why qt whyshyashfahsdf
+# https://stackoverflow.com/questions/67384273/problem-resizing-qtabwidget-according-to-tab-content-pyqt
+
+
+class ResizableTabWidget(QtGui.QTabWidget):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.initUI()
+
+	def initUI(self):
+		self.currentChanged.connect(self.updateGeometry)
+		tabBar = self.tabBar()
+		tabBar.setExpanding(False)
+		tabBar.setMovable(True)
+		tabBar.setUsesScrollButtons(True)
+		tabBar.setMinimumWidth(0)
+
+	def minimumSizeHint(self):
+		return self.sizeHint()
+
+	def sizeHint(self):
+		current = self.currentWidget()
+		hint = current.sizeHint()
+		if not current:
+			hint = super().sizeHint()
+		if (hint.height() == -1):
+			hint.setHeight(hint.height() + 30)  # otherwise tabs are completely hidden
+		return hint
+
 class MainWidget(QtGui.QWidget):
 	selection_info: SelectionInfo
 	def __init__(self):
@@ -14,7 +43,7 @@ class MainWidget(QtGui.QWidget):
 
 		self.selection_info = SelectionInfo(self.main_layout)
 
-		tab_widget = QtGui.QTabWidget()
+		tab_widget = ResizableTabWidget()
 		self.main_layout.addWidget(tab_widget)
 		collapse_tabs = QtGui.QWidget()
 		tab_widget.addTab(collapse_tabs, "^")  # type: ignore
