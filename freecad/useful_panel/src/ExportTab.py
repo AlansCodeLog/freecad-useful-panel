@@ -58,13 +58,13 @@ class ExportTab(QtGui.QWidget):
 					print(e)
 					cannot_export.append(obj)
 		App.ActiveDocument.recompute()
-		current_dir = os.path.dirname(App.ActiveDocument.FileName)
 		for doc, obj in objects:
 			if "Export" in obj.Label2 or "export" in obj.Label2:
 				obj_name = doc + "-" + obj.Label
 				if (obj in cannot_export):
 					print(obj_name + "has errors, cannot export.")
 					continue
+				current_dir = os.path.dirname(App.getDocument(doc).FileName) # type: ignore
 				directory = os.path.join(current_dir, export_location + "/")
 				filename = os.path.join(directory + obj_name + "." + export_type)
 				Path(directory).mkdir(parents=True, exist_ok=True)
