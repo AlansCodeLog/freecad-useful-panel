@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
+  <name>freecad.useful_panel</name>
+  <description>Freecad addon panel with some useful measuring and batch search/replace/export tools.</description>
+  <version>0.0.1</version>
+  <date>2023-01-25</date>
+  <maintainer email="alanscodelog@gmail.com">Alan North</maintainer>
+  <license file="LICENSE">LGPL-2.1</license>
+  <dep>scipy</dep>
+  <url type="repository" branch="develop">https://github.com/alanscodelog/freecad-useful-panel</url>
+  <url type="bugtracker">https://github.com/alanscodelog/freecad-useful-panel/issues</url>
+  <url type="documentation">https://github.com/alanscodelog/freecad-useful-panel</url>
+  <icon>freecad/useful_panel/resources/icon.svg</icon>
+
+  <content>
+    <workbench>
+      <classname>UsefulPanelWorkbench</classname>
+      <subdirectory>./</subdirectory>
+      <freecadmin>0.19</freecadmin>
+      <tag>tools</tag>
+      <tag>utilities</tag>
+    </workbench>
+  </content>
+
+</package>

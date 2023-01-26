@@ -1,6 +1,2 @@
-flake8
-flake8-tabs
-pep8-naming
-autopep8
 PySide2
-freecad-stubs #this is for ge
+freecad-stubs

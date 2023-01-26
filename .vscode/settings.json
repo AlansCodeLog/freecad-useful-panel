@@ -2,8 +2,7 @@
 	"python.pipenvPath": ".venv",
 	"python.defaultInterpreterPath": ".venv/bin/python",
 	"python.linting.enabled": true,
-	"python.linting.flake8Enabled": true,
 	"python.languageServer": "Pylance",
-	"python.analysis.autoImportCompletions":true,
+	"python.analysis.autoImportCompletions": true,
 	"python.envFile": "${workspaceFolder}/.env",
 }
