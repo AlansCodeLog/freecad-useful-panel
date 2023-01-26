@@ -3,11 +3,13 @@
 import __main__
 import FreeCAD
 import FreeCADGui as Gui
+import FreeCADGui as App
 
 # def message(txt):
 # 	msg = QtGui.QMessageBox()
 # 	msg.setText(str(txt))
 # 	msg.exec()
+
 
 def useful_panels_main(name):
 	if name == "NoneWorkbench":
