@@ -7,6 +7,7 @@ import FreeCAD as App
 import Mesh
 from PySide import QtCore, QtGui
 from .utils import get_all_objects
+from pathlib import Path
 
 class ExportTab(QtGui.QWidget):
 
@@ -64,8 +65,9 @@ class ExportTab(QtGui.QWidget):
 				if (obj in cannot_export):
 					print(obj_name + "has errors, cannot export.")
 					continue
-				filename = os.path.join(current_dir, export_location + "/" + obj_name + "." + export_type)
-
+				directory = os.path.join(current_dir, export_location + "/")
+				filename = os.path.join(directory + obj_name + "." + export_type)
+				Path(directory).mkdir(parents=True, exist_ok=True)
 				try:
 					if os.path.exists(filename):
 						os.remove(filename)
