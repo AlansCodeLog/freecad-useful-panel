@@ -6,6 +6,8 @@ import FreeCAD as App
 from PySide import QtCore, QtGui
 import __main__
 
+from freecad.useful_panel.src.ViewportWidget import ViewportWidget
+
 class UsefulPanelWorkbench(Gui.Workbench):
 	"""
 	Useful Panel Workbench
@@ -30,6 +32,8 @@ class UsefulPanelWorkbench(Gui.Workbench):
 
 		self.appendToolbar("UsefulPanel", self.toolbox)
 		self.appendMenu("UsefulPanel", self.toolbox)
+		mw = Gui.getMainWindow()
+		tw = ViewportWidget(mw)
 
 	def Activated(self):
 		self.main_panel.show()
@@ -45,5 +49,4 @@ Gui.Selection.addObserver(__main__.main_panel.selection_info.observer)  # type: 
 
 mw = Gui.getMainWindow()
 mw.addDockWidget(QtCore.Qt.RightDockWidgetArea, __main__.main_panel)
-
 Gui.addWorkbench(UsefulPanelWorkbench())# type:ignore
