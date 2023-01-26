@@ -15,8 +15,12 @@ https://user-images.githubusercontent.com/26168490/190905158-77e2890d-12f2-4be0-
 	- **CAREFUL:** This is a simple text replacement, and the outputted expression is not guaranteed to be valid.
 	- This can also be used to find objects that use a variable. Clicking on the row will bring it into focus if `Focus Object on Selection` is enabled.
 
+![](./freecad/useful_panel/resources/Screenshot-Export.png)
 - Provides a way to export all "marked" objects. Marking is done by including the word "Export" in the part's `Label2` property.
-	- Path is relative to the active document. Parts are named `{file name}-{object name}.{extension}`.
+	- Path are relative to each file by default but can be made relative to just the active file. Parts are named `{file name}-{object name}-{optional suffix}.{extension}`.
+		- ![](./freecad/useful_panel/resources/Screenshot-ExportSuffix.png)
+		- Optional suffix can be set by doing `Export(your suffix here)`, this can be a version number or some other information. You can even use [expressions](https://wiki.freecadweb.org/Expressions#String_concatenation) to set the value. Note you will have to click the expression icon, the `=` shortcut doesn't work here.
+	- You can check the report view to see where objects were saved.
 	- **The file is always overwritten if it exists.**
 
 ### Installation

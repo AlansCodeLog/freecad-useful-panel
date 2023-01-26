@@ -4,6 +4,7 @@
 import math
 import os
 import __main__
+import re
 import FreeCAD as App
 import ImportGui
 import Mesh
@@ -13,6 +14,7 @@ from PySide import QtCore, QtGui
 from .utils import get_all_objects
 from pathlib import Path
 
+export_suffix_regex = re.compile("Export\\((.*)\\)")
 class ExportTab(QtGui.QWidget):
 
 	def __init__(self):
@@ -99,7 +101,12 @@ class ExportTab(QtGui.QWidget):
 		App.ActiveDocument.recompute()
 		for doc, obj in objects:
 			if "Export" in obj.Label2 or "export" in obj.Label2:
-				obj_name = doc + "-" + obj.Label
+				suffix = export_suffix_regex.match(obj.Label2)
+				if suffix:
+					suffix = "-" + suffix.group(1)
+				else:
+					suffix = ""
+				obj_name = doc + "-" + obj.Label + suffix
 				if (obj in cannot_export):
 					print(obj_name + "has errors, cannot export.")
 					continue
