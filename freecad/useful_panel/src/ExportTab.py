@@ -36,7 +36,7 @@ class ExportTab(QtGui.QWidget):
 		export_layout.addWidget(self.stl_options_widget)
 		stl_options_layout = QtGui.QFormLayout(self.stl_options_widget)
 		stl_options_layout.setContentsMargins(QtCore.QMargins(0, 0, 0, 0))
-		self.stl_opt_surface_deviation = QtGui.QLineEdit("0.05")
+		self.stl_opt_surface_deviation = QtGui.QLineEdit("0.5")
 		tooltip = "This is the same option found when using the Mesh Workbench using the standard exporter."
 		self.stl_opt_surface_deviation.setToolTip(tooltip)
 		self.stl_opt_angular_deviation = QtGui.QLineEdit("1.0")
