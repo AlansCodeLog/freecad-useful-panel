@@ -104,9 +104,16 @@ class ExportTab(QtGui.QWidget):
 				suffix = export_suffix_regex.match(obj.Label2)
 				if suffix:
 					suffix = "-" + suffix.group(1)
+				custom_name = custom_name_regex.match(obj.Label2)
+				if custom_name:
+					if (custom_name.group(1)[0] == "="):
+						obj_name = custom_name.group(1)[1:]
+					else: 
+						suffix = "-" + custom_name.group(1)
+						obj_name = doc + "-" + obj.Label + suffix
 				else:
-					suffix = ""
-				obj_name = doc + "-" + obj.Label + suffix
+					obj_name = doc + "-" + obj.Label
+
 				if (obj in cannot_export):
 					print(obj_name + "has errors, cannot export.")
 					continue
