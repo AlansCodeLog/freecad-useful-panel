@@ -7,6 +7,7 @@ import __main__
 import re
 import FreeCAD as App
 import ImportGui
+import importSVG
 import Mesh
 import Part
 import MeshPart
@@ -14,7 +15,7 @@ from PySide import QtCore, QtGui
 from .utils import get_all_objects
 from pathlib import Path
 
-export_suffix_regex = re.compile("Export\\((.*)\\)")
+custom_name_regex = re.compile("Export\\((.*)\\)")
 class ExportTab(QtGui.QWidget):
 
 	def __init__(self):
@@ -27,7 +28,7 @@ class ExportTab(QtGui.QWidget):
 
 		export_type = QtGui.QLineEdit("stl")
 		self.export_type = export_type
-		export_layout.addRow("Export File Type", export_type) # type: ignore
+		export_layout.addRow("Mesh Export File Type", export_type) # type: ignore
 		export_type.textChanged.connect(self.check_show_stl_opts)
 
 		# STL Export Options
@@ -81,8 +82,8 @@ class ExportTab(QtGui.QWidget):
 
 	def export_all_marked(self):
 		export_location = self.export_location.text()
-		export_type = self.export_type.text()
 		is_stl_export = self.is_stl_export()
+		mesh_export_type = self.export_type.text()
 		surface_deviation = None
 		angular_deviation = None
 		if (is_stl_export):
@@ -101,9 +102,11 @@ class ExportTab(QtGui.QWidget):
 		App.ActiveDocument.recompute()
 		for doc, obj in objects:
 			if "Export" in obj.Label2 or "export" in obj.Label2:
-				suffix = export_suffix_regex.match(obj.Label2)
-				if suffix:
-					suffix = "-" + suffix.group(1)
+				export_type = mesh_export_type 
+				is_already_mesh =  isinstance(obj, Mesh.Feature)
+				is_sketch = obj.isDerivedFrom("Sketcher::SketchObject")
+				if is_sketch:
+					export_type = "svg"
 				custom_name = custom_name_regex.match(obj.Label2)
 				if custom_name:
 					if (custom_name.group(1)[0] == "="):
@@ -124,8 +127,11 @@ class ExportTab(QtGui.QWidget):
 				try:
 					if os.path.exists(filename):
 						os.remove(filename)
-
-					if (is_stl_export):
+					if is_sketch:
+						importSVG.export([obj],filename)
+					elif (is_already_mesh):
+						Mesh.export([obj], filename)
+					elif (is_stl_export):
 						mesh = App.getDocument(doc).addObject("Mesh::Feature", "Mesh") # type: ignore
 						shape = Part.getShape(obj)
 						mesh.Mesh = MeshPart.meshFromShape(Shape=shape, LinearDeflection=surface_deviation, AngularDeflection=angular_deviation, Relative=True)
@@ -136,5 +142,5 @@ class ExportTab(QtGui.QWidget):
 
 					print("Exported: " + filename)
 				except Exception as e:
-					print("Failed to export :" + obj_name)
+					print("Failed to export: " + obj_name)
 					print(e)
