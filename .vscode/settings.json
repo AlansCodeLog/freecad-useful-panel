@@ -5,4 +5,5 @@
 	"python.languageServer": "Pylance",
 	"python.analysis.autoImportCompletions": true,
 	"python.envFile": "${workspaceFolder}/.env",
+	"python.analysis.autoSearchPaths": true
 }
